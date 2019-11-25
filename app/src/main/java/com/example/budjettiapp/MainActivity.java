@@ -12,6 +12,7 @@ import java.text.DecimalFormat;
 public class MainActivity extends AppCompatActivity {
     Double lahtoSumma;
     Double vahennysMaara;
+    Double paivakohtainenRahaMaara;
     //Muotoilu jotta nähdään 2.desimaalin tarkkuudella
     private static DecimalFormat df2 = new DecimalFormat("#.##");
 
@@ -26,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
         final TextView summanNaytto = (TextView) findViewById(R.id.naytaSumma);
         final EditText vahennyksenMaara = (EditText) findViewById(R.id.vahennettavaSumma);
         final EditText asetaSumma = (EditText) findViewById(R.id.summanAsetus);
+        final TextView paivakohtainenBudjetti = (TextView) findViewById(R.id.paivaBudjettiTeksti);
 
 
 
@@ -35,8 +37,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 lahtoSumma = Double.valueOf(Float.valueOf(asetaSumma.getText().toString()));
-                summanNaytto.setText("Jäljellä: "+ df2.format(lahtoSumma) + "€");
+                summanNaytto.setText("Käytettävissä: "+ df2.format(lahtoSumma) + "€");
                 asetaSumma.getText().clear();
+                paivakohtainenRahaMaara = lahtoSumma / 30;
+                paivakohtainenBudjetti.setText("Per päivä: " + df2.format(paivakohtainenRahaMaara) + "€");
             }
         });
 
@@ -48,6 +52,8 @@ public class MainActivity extends AppCompatActivity {
                 lahtoSumma = lahtoSumma - vahennysMaara;
                 summanNaytto.setText("Jäljellä: "+ df2.format(lahtoSumma) + "€");
                 vahennyksenMaara.getText().clear();
+                paivakohtainenRahaMaara = lahtoSumma / 30;
+                paivakohtainenBudjetti.setText("Per päivä: " + df2.format(paivakohtainenRahaMaara));
             }
         });
 
