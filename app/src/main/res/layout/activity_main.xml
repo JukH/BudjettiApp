@@ -29,16 +29,40 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/naytaSumma" />
 
+    <TextView
+        android:id="@+id/paivienMaaraTeksti"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/paivaBudjettiTeksti" />
+
     <EditText
         android:id="@+id/summanAsetus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="14dp"
+        android:layout_marginBottom="8dp"
         android:ems="10"
         android:hint="Anna budjettisi.."
         android:inputType="numberDecimal"
+        app:layout_constraintBottom_toTopOf="@+id/paivienMaaraInput"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+        android:id="@+id/paivienMaaraInput"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:ems="10"
+        android:hint="Päivien määrä..."
+        android:inputType="number"
         app:layout_constraintBottom_toTopOf="@+id/muokkausNappi"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -63,7 +87,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:ems="10"
-        android:hint="Paljonko törsäsit...?"
+        android:hint="Paljon meni/tuli...?"
         android:inputType="numberDecimal"
         app:layout_constraintBottom_toTopOf="@+id/vahennysNappi"
         app:layout_constraintEnd_toEndOf="parent"
@@ -78,6 +102,20 @@
         android:layout_marginBottom="8dp"
         android:text="Vähennä"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/lisaysNappi"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/lisaysNappi"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:layout_weight="1"
+        android:text="Lisää"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/vahennysNappi" />
+
 </android.support.constraint.ConstraintLayout>
