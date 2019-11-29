@@ -94,33 +94,36 @@ public class MainActivity extends AppCompatActivity {
         summanMuutos.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                lahtoSumma = Float.valueOf(asetaSumma.getText().toString());
-                summanNaytto.setText("Käytettävissä: "+ String.format("%.2f", lahtoSumma) + "€");
-                //Tallennetaan lähtösumma
-                editor.putString("summa", df2.format(lahtoSumma));
+
+                if(!asetaSumma.getText().toString().matches("")&& !ilmoitaPaivat.getText().toString().matches("")) {
+                    lahtoSumma = Float.valueOf(asetaSumma.getText().toString());
+                    summanNaytto.setText("Käytettävissä: " + String.format("%.2f", lahtoSumma) + "€");
+                    //Tallennetaan lähtösumma
+                    editor.putString("summa", df2.format(lahtoSumma));
 
 
+                    String paivienmaara = ilmoitaPaivat.getText().toString();
+                    paivat = Integer.parseInt(paivienmaara);
+                    paivakohtainenRahaMaara = lahtoSumma / paivat;
+                    paivakohtainenBudjetti.setText("Käytettävissä per päivä: " + df2.format(paivakohtainenRahaMaara) + "€");
+
+                    //Tallennetaan päiväkohtainen summa
+                    editor.putString("paivaBudjetti", df2.format(paivakohtainenRahaMaara));
 
 
-                String paivienmaara = ilmoitaPaivat.getText().toString();
-                paivat = Integer.parseInt(paivienmaara);
-                paivakohtainenRahaMaara = lahtoSumma / paivat;
-                paivakohtainenBudjetti.setText("Käytettävissä per päivä: " + df2.format(paivakohtainenRahaMaara) + "€");
+                    ilmoitaPaivat.getText().clear();
+                    asetaSumma.getText().clear();
 
-                //Tallennetaan päiväkohtainen summa
-                editor.putString("paivaBudjetti", df2.format(paivakohtainenRahaMaara));
+                    //Asetetaan teksti jäljellä olevien päivien näyttöä varten
+                    paivienMaara.setText("Päiviä jäljellä: " + paivat);
 
+                    //Tallennetaan päivien määrä
+                    editor.putInt("paivat", paivat);
 
-                ilmoitaPaivat.getText().clear();
-                asetaSumma.getText().clear();
-
-                //Asetetaan teksti jäljellä olevien päivien näyttöä varten
-                paivienMaara.setText("Päiviä jäljellä: " + paivat);
-
-                //Tallennetaan päivien määrä
-                editor.putInt("paivat", paivat);
-
-                editor.apply();
+                    editor.apply();
+                } else {
+                    Toast.makeText(getApplicationContext(),"Anna budjetti sekä päivien määrä",Toast. LENGTH_LONG).show();
+                }
 
             }
         });
@@ -129,23 +132,28 @@ public class MainActivity extends AppCompatActivity {
         vahennys.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                lisaysTaiVahennysMaara = Float.valueOf(vahennyksenMaara.getText().toString());
-                lahtoSumma = lahtoSumma - lisaysTaiVahennysMaara;
-                summanNaytto.setText("Jäljellä: "+ df2.format(lahtoSumma) + "€");
-                vahennyksenMaara.getText().clear();
-                paivakohtainenRahaMaara = lahtoSumma / paivat;
-                paivakohtainenBudjetti.setText("Per päivä: " + String.format("%.2f", paivakohtainenRahaMaara) + "€");
 
-                //Tallenetaan summa
-                editor.putString("summa", df2.format(lahtoSumma));
+                if(!vahennyksenMaara.getText().toString().matches("")) {
+                    lisaysTaiVahennysMaara = Float.valueOf(vahennyksenMaara.getText().toString());
+                    lahtoSumma = lahtoSumma - lisaysTaiVahennysMaara;
+                    summanNaytto.setText("Jäljellä: " + df2.format(lahtoSumma) + "€");
+                    vahennyksenMaara.getText().clear();
+                    paivakohtainenRahaMaara = lahtoSumma / paivat;
+                    paivakohtainenBudjetti.setText("Per päivä: " + String.format("%.2f", paivakohtainenRahaMaara) + "€");
 
-                //Tallennetaan päiväkohtainen summa
-                editor.putString("paivaBudjetti", df2.format(paivakohtainenRahaMaara));
+                    //Tallenetaan summa
+                    editor.putString("summa", String.format("%.2f", lahtoSumma));
 
-                //Tallennetaan päivien määrä
-                editor.putInt("paivat", paivat);
+                    //Tallennetaan päiväkohtainen summa
+                    editor.putString("paivaBudjetti", String.format("%.2f", paivakohtainenRahaMaara));
 
-                editor.apply();
+                    //Tallennetaan päivien määrä
+                    editor.putInt("paivat", paivat);
+
+                    editor.apply();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Anna vähennettävä summa", Toast.LENGTH_LONG).show();
+                }
             }
         });
 
@@ -153,23 +161,28 @@ public class MainActivity extends AppCompatActivity {
         lisäys.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                lisaysTaiVahennysMaara = Float.valueOf(vahennyksenMaara.getText().toString());
-                lahtoSumma = lahtoSumma + lisaysTaiVahennysMaara;
-                summanNaytto.setText("Jäljellä: "+ df2.format(lahtoSumma) + "€");
-                vahennyksenMaara.getText().clear();
-                paivakohtainenRahaMaara = lahtoSumma / paivat;
-                paivakohtainenBudjetti.setText("Per päivä: " + String.format("%.2f", paivakohtainenRahaMaara) + "€");
 
-                //Tallenetaan summa
-                editor.putString("summa", df2.format(lahtoSumma));
+                if(!vahennyksenMaara.getText().toString().matches("")) {
+                    lisaysTaiVahennysMaara = Float.valueOf(vahennyksenMaara.getText().toString());
+                    lahtoSumma = lahtoSumma + lisaysTaiVahennysMaara;
+                    summanNaytto.setText("Jäljellä: " + df2.format(lahtoSumma) + "€");
+                    vahennyksenMaara.getText().clear();
+                    paivakohtainenRahaMaara = lahtoSumma / paivat;
+                    paivakohtainenBudjetti.setText("Per päivä: " + String.format("%.2f", paivakohtainenRahaMaara) + "€");
 
-                //Tallennetaan päiväkohtainen summa
-                editor.putString("paivaBudjetti", df2.format(paivakohtainenRahaMaara));
+                    //Tallenetaan summa
+                    editor.putString("summa", df2.format(lahtoSumma));
 
-                //Tallennetaan päivien määrä
-                editor.putInt("paivat", paivat);
+                    //Tallennetaan päiväkohtainen summa
+                    editor.putString("paivaBudjetti", df2.format(paivakohtainenRahaMaara));
 
-                editor.apply();
+                    //Tallennetaan päivien määrä
+                    editor.putInt("paivat", paivat);
+
+                    editor.apply();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Anna lisättävä summa", Toast.LENGTH_LONG).show();
+                }
             }
         });
 
