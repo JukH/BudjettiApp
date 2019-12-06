@@ -1,6 +1,9 @@
 package com.example.budjettiapp;
 
 import android.app.AlertDialog;
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,6 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.RemoteViews;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
     float lisaysTaiVahennysMaara;
     float paivakohtainenRahaMaara;
     int paivat;
+
+    Context context = this;
 
     //Muotoilu jotta nähdään 2.desimaalin tarkkuudella
     private static DecimalFormat df2 = new DecimalFormat("#.##");
@@ -55,16 +61,22 @@ public class MainActivity extends AppCompatActivity {
         //Haetaan data, jos sitä on ennestään
         if(!summanNaytto.getText().toString().matches("")) {
             String rahaMäärä = pref.getString("summa", null);
-            rahaMäärä = rahaMäärä.replace(",",".");
-            lahtoSumma = Float.parseFloat(rahaMäärä);
-            summanNaytto.setText("Käytettävissä: " + String.format("%.2f", lahtoSumma) + "€");
+            if (rahaMäärä != null) {
+                rahaMäärä = rahaMäärä.replace(",", ".");
+                lahtoSumma = Float.parseFloat(rahaMäärä);
+                summanNaytto.setText("Käytettävissä: " + String.format("%.2f", lahtoSumma) + "€");
+            }
+
         }
 
         if(paivakohtainenBudjetti.getText().toString().matches("")){
             String tallennettuTietoPaivista = pref.getString("paivaBudjetti", null);
-            tallennettuTietoPaivista = tallennettuTietoPaivista.replace(",", ".");
-            paivakohtainenRahaMaara = Float.parseFloat(tallennettuTietoPaivista);
-            paivakohtainenBudjetti.setText("Käytettävissä per päivä: " + df2.format(paivakohtainenRahaMaara) + "€");
+            if(tallennettuTietoPaivista != null) {
+                tallennettuTietoPaivista = tallennettuTietoPaivista.replace(",", ".");
+
+                paivakohtainenRahaMaara = Float.parseFloat(tallennettuTietoPaivista);
+                paivakohtainenBudjetti.setText("Käytettävissä per päivä: " + df2.format(paivakohtainenRahaMaara) + "€");
+            }
         }
 
         if(paivienMaara.getText().toString().matches("")){
@@ -121,6 +133,20 @@ public class MainActivity extends AppCompatActivity {
                     editor.putInt("paivat", paivat);
 
                     editor.apply();
+//////////////////
+                      //Koitetaan päivittää widget 6.12.19 LÄHTÖSUMMA
+                    AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+                    RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.budjetti_widget);
+                    ComponentName thisWidget = new ComponentName(context, BudjettiWidget.class);
+                    remoteViews.setTextViewText(R.id.widget_lähtösumma_text, "Käytettävissä:" + df2.format(lahtoSumma) + "€");
+                    //Koitetaan päivittää widget 6.12.19 PÄIVÄT
+                    remoteViews.setTextViewText(R.id.widget_päiviä_teksti, "Päiviä jäljellä: " + paivat);
+                    remoteViews.setTextViewText(R.id.widget_päiväkohtainen_rahamäärä_text, "Per päivä: " + df2.format(paivakohtainenRahaMaara) + "€");
+                    appWidgetManager.updateAppWidget(thisWidget, remoteViews);
+
+
+                    ///////////////////////////
+
                 } else {
                     Toast.makeText(getApplicationContext(),"Anna budjetti sekä päivien määrä",Toast. LENGTH_LONG).show();
                 }
@@ -151,6 +177,19 @@ public class MainActivity extends AppCompatActivity {
                     editor.putInt("paivat", paivat);
 
                     editor.apply();
+
+                    //KOITETAAN PÄIVITTÄÄ WIDGET
+                    AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+                    RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.budjetti_widget);
+                    ComponentName thisWidget = new ComponentName(context, BudjettiWidget.class);
+                    remoteViews.setTextViewText(R.id.widget_lähtösumma_text, "Käytettävissä:" + df2.format(lahtoSumma) + "€");
+                    //Koitetaan päivittää widget 6.12.19 PÄIVÄT
+                    remoteViews.setTextViewText(R.id.widget_päiviä_teksti, "Päiviä jäljellä: " + paivat);
+                    remoteViews.setTextViewText(R.id.widget_päiväkohtainen_rahamäärä_text, "Per päivä: " + df2.format(paivakohtainenRahaMaara) + "€");
+                    appWidgetManager.updateAppWidget(thisWidget, remoteViews);
+                    //
+
+
                 } else {
                     Toast.makeText(getApplicationContext(), "Anna vähennettävä summa", Toast.LENGTH_LONG).show();
                 }
@@ -180,6 +219,17 @@ public class MainActivity extends AppCompatActivity {
                     editor.putInt("paivat", paivat);
 
                     editor.apply();
+
+                    //KOITETAAN PÄIVITTÄÄ WIDGET
+                    AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+                    RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.budjetti_widget);
+                    ComponentName thisWidget = new ComponentName(context, BudjettiWidget.class);
+                    remoteViews.setTextViewText(R.id.widget_lähtösumma_text, "Käytettävissä:" + df2.format(lahtoSumma) + "€");
+                    //Koitetaan päivittää widget 6.12.19 PÄIVÄT
+                    remoteViews.setTextViewText(R.id.widget_päiviä_teksti, "Päiviä jäljellä: " + paivat);
+                    remoteViews.setTextViewText(R.id.widget_päiväkohtainen_rahamäärä_text, "Per päivä: " + df2.format(paivakohtainenRahaMaara) + "€");
+                    appWidgetManager.updateAppWidget(thisWidget, remoteViews);
+                    //
                 } else {
                     Toast.makeText(getApplicationContext(), "Anna lisättävä summa", Toast.LENGTH_LONG).show();
                 }
