@@ -1,7 +1,11 @@
 package com.example.budjettiapp;
 
+import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -12,6 +16,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -22,6 +27,9 @@ import android.widget.Toast;
 import java.text.DecimalFormat;
 import java.time.Year;
 import java.util.Calendar;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -32,7 +40,6 @@ public class MainActivity extends AppCompatActivity {
     int paivat;
 
     Context context = this;
-
     //Muotoilu jotta nähdään 2.desimaalin tarkkuudella
     private static DecimalFormat df2 = new DecimalFormat("#.##");
 
@@ -58,46 +65,52 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", MODE_PRIVATE);
         final SharedPreferences.Editor editor = pref.edit();
 
-        //Haetaan data, jos sitä on ennestään
-        if(!summanNaytto.getText().toString().matches("")) {
-            String rahaMäärä = pref.getString("summa", null);
-            if (rahaMäärä != null) {
-                rahaMäärä = rahaMäärä.replace(",", ".");
-                lahtoSumma = Float.parseFloat(rahaMäärä);
-                summanNaytto.setText("Käytettävissä: " + String.format("%.2f", lahtoSumma) + "€");
+
+            //Haetaan data, jos sitä on ennestään
+            if (!summanNaytto.getText().toString().matches("")) {
+                String rahaMäärä = pref.getString("summa", null);
+                if (rahaMäärä != null) {
+                    rahaMäärä = rahaMäärä.replace(",", ".");
+                    lahtoSumma = Float.parseFloat(rahaMäärä);
+                    summanNaytto.setText("Käytettävissä: " + String.format("%.2f", lahtoSumma) + "€");
+                }
+
             }
 
-        }
+            if (paivakohtainenBudjetti.getText().toString().matches("")) {
+                String tallennettuTietoPaivista = pref.getString("paivaBudjetti", null);
+                if (tallennettuTietoPaivista != null) {
+                    tallennettuTietoPaivista = tallennettuTietoPaivista.replace(",", ".");
 
-        if(paivakohtainenBudjetti.getText().toString().matches("")){
-            String tallennettuTietoPaivista = pref.getString("paivaBudjetti", null);
-            if(tallennettuTietoPaivista != null) {
-                tallennettuTietoPaivista = tallennettuTietoPaivista.replace(",", ".");
-
-                paivakohtainenRahaMaara = Float.parseFloat(tallennettuTietoPaivista);
-                paivakohtainenBudjetti.setText("Käytettävissä per päivä: " + df2.format(paivakohtainenRahaMaara) + "€");
+                    paivakohtainenRahaMaara = Float.parseFloat(tallennettuTietoPaivista);
+                    paivakohtainenBudjetti.setText("Käytettävissä per päivä: " + df2.format(paivakohtainenRahaMaara) + "€");
+                }
             }
-        }
 
-        if(paivienMaara.getText().toString().matches("")){
-            paivat = pref.getInt("paivat",0);
-            paivienMaara.setText("Päiviä jäljellä: " + paivat);
-        }
-
-        //////////////////////////////////////////////////////////////////
-
-        //Päivän vaihtuessa vähennetään 1 päivä päivälaskurista
-        DatePicker datePicker = new DatePicker(this);
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
-        datePicker.init(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), new DatePicker.OnDateChangedListener() {
-
-            @Override
-            public void onDateChanged(DatePicker datePicker, int year, int month, int dayOfMonth) {
-                paivat =  paivat - 1;
+            if (paivienMaara.getText().toString().matches("")) {
+                paivat = pref.getInt("paivat", 0);
                 paivienMaara.setText("Päiviä jäljellä: " + paivat);
             }
-        });
+
+
+        ////////////////////////////////////////////////////////////////// Tietojen päivittäminen keskiyöllä
+        Calendar setCalendar = Calendar.getInstance();
+        setCalendar.set(Calendar.HOUR_OF_DAY, 0);
+        setCalendar.set(Calendar.MINUTE,0);
+        setCalendar.set(Calendar.SECOND,0);
+        //setCalendar.add(Calendar.DATE, 1);
+
+        //Luodaan intent jotta saadaan data alarmManageriin
+        Intent intent = new Intent(this, AlarmReceiver.class);
+        intent.putExtra("lähtösumma", lahtoSumma);
+        intent.putExtra("päivät", paivat);
+
+
+        PendingIntent pi = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        alarmManager.setRepeating(AlarmManager.RTC, setCalendar.getTimeInMillis(), 1000 * 60 *60 *24 , pi);
+
+
 
         //////////////////////////////////////////////////////////////////
 
@@ -189,7 +202,6 @@ public class MainActivity extends AppCompatActivity {
                     appWidgetManager.updateAppWidget(thisWidget, remoteViews);
                     //
 
-
                 } else {
                     Toast.makeText(getApplicationContext(), "Anna vähennettävä summa", Toast.LENGTH_LONG).show();
                 }
@@ -238,6 +250,8 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
+
     /*
     private void päivitäPäivät(Calendar kalenteri) {
         paivat -= 1;
@@ -263,5 +277,33 @@ public class MainActivity extends AppCompatActivity {
         // killed and restarted.
 
         savedInstanceState.putDouble("summanNaytto", 1.9);
+    }
+
+    //pendingIntent tuo extroina päivät ja kokonaissumman
+    public static class AlarmReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //Päivitetään tiedot kun vuorokausi vaihtuu
+            int paivat = intent.getIntExtra("päivät",0);
+            float lahtoSumma = intent.getFloatExtra("lähtösumma",0);
+
+            //Vähennetään 1 päivä
+            paivat = paivat - 1;
+            //Lasketaan uusi päivittäinen käyttövara
+            float paivakohtainenRahaMaara = lahtoSumma / paivat;
+
+            //KOITETAAN PÄIVITTÄÄ WIDGET
+            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+            RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.budjetti_widget);
+            ComponentName thisWidget = new ComponentName(context, BudjettiWidget.class);
+            remoteViews.setTextViewText(R.id.widget_lähtösumma_text, "Käytettävissä:" + df2.format(lahtoSumma) + "€");
+            //Koitetaan päivittää widget 6.12.19 PÄIVÄT
+            remoteViews.setTextViewText(R.id.widget_päiviä_teksti, "Päiviä jäljellä: " + paivat);
+            remoteViews.setTextViewText(R.id.widget_päiväkohtainen_rahamäärä_text, "Per päivä: " + df2.format(paivakohtainenRahaMaara) + "€");
+            appWidgetManager.updateAppWidget(thisWidget, remoteViews);
+
+            Toast.makeText(context, "Vuorokausi vaihtui", Toast.LENGTH_LONG).show();
+
+        }
     }
 }

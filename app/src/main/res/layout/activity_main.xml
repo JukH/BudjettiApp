@@ -44,74 +44,79 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
         android:ems="10"
         android:hint="Anna budjettisi.."
         android:inputType="numberDecimal"
-        app:layout_constraintBottom_toTopOf="@+id/paivienMaaraInput"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/paivienMaaraTeksti" />
 
     <EditText
         android:id="@+id/paivienMaaraInput"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
         android:ems="10"
         android:hint="Päivien määrä..."
         android:inputType="number"
-        app:layout_constraintBottom_toTopOf="@+id/muokkausNappi"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/summanAsetus" />
 
     <Button
         android:id="@+id/muokkausNappi"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
         android:text="Aseta summa"
-        app:layout_constraintBottom_toTopOf="@+id/vahennettavaSumma"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/paivienMaaraInput" />
 
     <EditText
         android:id="@+id/vahennettavaSumma"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
         android:ems="10"
         android:hint="Meno/tulo..."
+        android:imeOptions="actionDone"
         android:inputType="numberDecimal"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/lisaysNappi"
-        app:layout_constraintStart_toEndOf="@+id/vahennysNappi" />
+        app:layout_constraintStart_toEndOf="@+id/vahennysNappi"
+        app:layout_constraintTop_toBottomOf="@+id/muokkausNappi" />
 
     <Button
         android:id="@+id/vahennysNappi"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginBottom="8dp"
-        android:text="-"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="Vähennä"
+        app:layout_constraintEnd_toStartOf="@+id/vahennettavaSumma"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/muokkausNappi" />
 
     <Button
         android:id="@+id/lisaysNappi"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="7dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
         android:layout_weight="1"
-        android:text="+"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        android:text="Lisää"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/vahennettavaSumma"
+        app:layout_constraintTop_toBottomOf="@+id/muokkausNappi" />
 
 </android.support.constraint.ConstraintLayout>
