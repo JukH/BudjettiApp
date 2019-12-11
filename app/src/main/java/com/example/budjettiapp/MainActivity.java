@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
         setCalendar.set(Calendar.HOUR_OF_DAY, 0);
         setCalendar.set(Calendar.MINUTE,0);
         setCalendar.set(Calendar.SECOND,0);
-        //setCalendar.add(Calendar.DATE, 1);
+        setCalendar.add(Calendar.DATE, 1);
 
         //Luodaan intent jotta saadaan data alarmManageriin
         Intent intent = new Intent(this, AlarmReceiver.class);
@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
 
                 if(!asetaSumma.getText().toString().matches("")&& !ilmoitaPaivat.getText().toString().matches("")) {
                     lahtoSumma = Float.valueOf(asetaSumma.getText().toString());
-                    summanNaytto.setText("Käytettävissä: " + String.format("%.2f", lahtoSumma) + "€");
+                    summanNaytto.setText("Jäljellä: " + String.format("%.2f", lahtoSumma) + "€");
                     //Tallennetaan lähtösumma
                     editor.putString("summa", df2.format(lahtoSumma));
 
@@ -130,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
                     String paivienmaara = ilmoitaPaivat.getText().toString();
                     paivat = Integer.parseInt(paivienmaara);
                     paivakohtainenRahaMaara = lahtoSumma / paivat;
-                    paivakohtainenBudjetti.setText("Käytettävissä per päivä: " + df2.format(paivakohtainenRahaMaara) + "€");
+                    paivakohtainenBudjetti.setText("Per päivä: " + df2.format(paivakohtainenRahaMaara) + "€");
 
                     //Tallennetaan päiväkohtainen summa
                     editor.putString("paivaBudjetti", df2.format(paivakohtainenRahaMaara));
@@ -151,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
                     AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
                     RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.budjetti_widget);
                     ComponentName thisWidget = new ComponentName(context, BudjettiWidget.class);
-                    remoteViews.setTextViewText(R.id.widget_lähtösumma_text, "Käytettävissä:" + df2.format(lahtoSumma) + "€");
+                    remoteViews.setTextViewText(R.id.widget_lähtösumma_text, "Jäljellä:" + df2.format(lahtoSumma) + "€");
                     //Koitetaan päivittää widget 6.12.19 PÄIVÄT
                     remoteViews.setTextViewText(R.id.widget_päiviä_teksti, "Päiviä jäljellä: " + paivat);
                     remoteViews.setTextViewText(R.id.widget_päiväkohtainen_rahamäärä_text, "Per päivä: " + df2.format(paivakohtainenRahaMaara) + "€");
@@ -195,7 +195,7 @@ public class MainActivity extends AppCompatActivity {
                     AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
                     RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.budjetti_widget);
                     ComponentName thisWidget = new ComponentName(context, BudjettiWidget.class);
-                    remoteViews.setTextViewText(R.id.widget_lähtösumma_text, "Käytettävissä:" + df2.format(lahtoSumma) + "€");
+                    remoteViews.setTextViewText(R.id.widget_lähtösumma_text, "Jäljellä:" + df2.format(lahtoSumma) + "€");
                     //Koitetaan päivittää widget 6.12.19 PÄIVÄT
                     remoteViews.setTextViewText(R.id.widget_päiviä_teksti, "Päiviä jäljellä: " + paivat);
                     remoteViews.setTextViewText(R.id.widget_päiväkohtainen_rahamäärä_text, "Per päivä: " + df2.format(paivakohtainenRahaMaara) + "€");
@@ -236,7 +236,7 @@ public class MainActivity extends AppCompatActivity {
                     AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
                     RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.budjetti_widget);
                     ComponentName thisWidget = new ComponentName(context, BudjettiWidget.class);
-                    remoteViews.setTextViewText(R.id.widget_lähtösumma_text, "Käytettävissä:" + df2.format(lahtoSumma) + "€");
+                    remoteViews.setTextViewText(R.id.widget_lähtösumma_text, "Jäljellä:" + df2.format(lahtoSumma) + "€");
                     //Koitetaan päivittää widget 6.12.19 PÄIVÄT
                     remoteViews.setTextViewText(R.id.widget_päiviä_teksti, "Päiviä jäljellä: " + paivat);
                     remoteViews.setTextViewText(R.id.widget_päiväkohtainen_rahamäärä_text, "Per päivä: " + df2.format(paivakohtainenRahaMaara) + "€");
@@ -283,6 +283,7 @@ public class MainActivity extends AppCompatActivity {
     public static class AlarmReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
+            Toast.makeText(context, "Vuorokausi vaihtui", Toast.LENGTH_LONG).show();
             //Päivitetään tiedot kun vuorokausi vaihtuu
             int paivat = intent.getIntExtra("päivät",0);
             float lahtoSumma = intent.getFloatExtra("lähtösumma",0);
@@ -296,13 +297,31 @@ public class MainActivity extends AppCompatActivity {
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
             RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.budjetti_widget);
             ComponentName thisWidget = new ComponentName(context, BudjettiWidget.class);
-            remoteViews.setTextViewText(R.id.widget_lähtösumma_text, "Käytettävissä:" + df2.format(lahtoSumma) + "€");
+            remoteViews.setTextViewText(R.id.widget_lähtösumma_text, "Jäljellä:" + df2.format(lahtoSumma) + "€");
             //Koitetaan päivittää widget 6.12.19 PÄIVÄT
             remoteViews.setTextViewText(R.id.widget_päiviä_teksti, "Päiviä jäljellä: " + paivat);
             remoteViews.setTextViewText(R.id.widget_päiväkohtainen_rahamäärä_text, "Per päivä: " + df2.format(paivakohtainenRahaMaara) + "€");
             appWidgetManager.updateAppWidget(thisWidget, remoteViews);
 
-            Toast.makeText(context, "Vuorokausi vaihtui", Toast.LENGTH_LONG).show();
+            //Otetaan käyttöön shared preferences tiedon tallentamista varten
+            SharedPreferences pref = context.getSharedPreferences("MyPref", MODE_PRIVATE);
+            SharedPreferences.Editor editor = pref.edit();
+
+            //Tallennetaan päiväkohtainen summa
+            editor.putString("paivaBudjetti", df2.format(paivakohtainenRahaMaara));
+
+            //Tallennetaan päivien määrä
+            editor.putInt("paivat", paivat);
+
+            editor.apply();
+/*
+            Intent paluuPäivityksestä = new Intent(context, MainActivity.class);
+            PendingIntent pi = PendingIntent.getBroadcast(context, 0, paluuPäivityksestä, PendingIntent.FLAG_UPDATE_CURRENT);
+            paluuPäivityksestä.putExtra("päivitettyLähtöSumma", lahtoSumma);
+            paluuPäivityksestä.putExtra("päivitettyPäivät", paivat);
+            paluuPäivityksestä.putExtra("päivitettyPäiväkohtainenRahamäärä", paivakohtainenRahaMaara);
+            context.start(pi); */
+
 
         }
     }
